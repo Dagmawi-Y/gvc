@@ -15,15 +15,17 @@ app.add_middleware(
 
 db = AppwriteDB()
 
-def is_valid_github_referrer(request: Request) -> bool:
+def is_valid_github_referrer(request: Request, username: str) -> bool:
     referrer = request.headers.get("referer", "")
     if not referrer:
         return True
     
     parsed = urlparse(referrer)
+    path_parts = parsed.path.strip('/').split('/')
+    
     return (parsed.netloc == "github.com" and 
-            len(parsed.path.split('/')) >= 3 and
-            not any(x in parsed.path for x in ['/pulls', '/issues', '/commit', '/releases', '/actions']))
+            len(path_parts) == 1 and
+            path_parts[0].lower() == username.lower())
 
 @app.get("/")
 async def root():
@@ -57,8 +59,7 @@ async def get_badge(
 ):
     repository = f"{username}/{repo}"
     
-    # Only increment count if it's a valid GitHub referrer
-    if is_valid_github_referrer(request):
+    if is_valid_github_referrer(request, username):
         count = await db.increment_views(repository)
     else:
         count = await db.get_views(repository)

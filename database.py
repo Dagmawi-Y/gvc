@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 import time
+from urllib.parse import urlparse
 
 load_dotenv()
 
@@ -44,7 +45,6 @@ class AppwriteDB:
             current_time = datetime.now().isoformat()
             
             if result['total'] == 0:
-                # Create new document
                 doc = self.database.create_document(
                     database_id=self.database_id,
                     collection_id=self.collection_id,
@@ -57,7 +57,6 @@ class AppwriteDB:
                 )
                 return 1
             else:
-                # Update existing document
                 doc = result['documents'][0]
                 new_count = doc['count'] + 1
                 self.database.update_document(
@@ -74,12 +73,26 @@ class AppwriteDB:
             print(f"Error: {e}")
             return 0
 
-    async def can_increment_view(self, ip: str, username: str, rate_limit_minutes: int = 60) -> bool:
-        try:
-            cache_key = f"{ip}:{username}"
-            current_time = time.time()
+    def _is_valid_github_profile(self, referrer: str, username: str) -> bool:
+        if not referrer:
+            return False
             
-            # Check existing record
+        parsed = urlparse(referrer)
+        path_parts = parsed.path.strip('/').split('/')
+        
+        return (parsed.netloc == "github.com" and 
+                len(path_parts) == 1 and
+                path_parts[0].lower() == username.lower() and
+                not parsed.query)
+
+    async def can_increment_view(self, username: str, referrer: str, rate_limit_minutes: int = 60) -> bool:
+        try:
+            if not self._is_valid_github_profile(referrer, username):
+                return False
+
+            current_time = time.time()
+            cache_key = username
+            
             result = self.database.list_documents(
                 database_id=self.database_id,
                 collection_id=self.ip_collection_id,
@@ -90,11 +103,9 @@ class AppwriteDB:
                 doc = result['documents'][0]
                 last_view_time = float(doc['last_view_time'])
                 
-                # Check if enough time has passed
                 if current_time - last_view_time < rate_limit_minutes * 60:
                     return False
                 
-                # Update last view time
                 self.database.update_document(
                     database_id=self.database_id,
                     collection_id=self.ip_collection_id,
@@ -102,7 +113,6 @@ class AppwriteDB:
                     data={'last_view_time': str(current_time)}
                 )
             else:
-                # Create new record
                 self.database.create_document(
                     database_id=self.database_id,
                     collection_id=self.ip_collection_id,
@@ -116,5 +126,5 @@ class AppwriteDB:
             return True
             
         except Exception as e:
-            print(f"Error checking IP cache: {e}")
-            return False  # On error, don't increment to be safe 
+            print(f"Error checking cache: {e}")
+            return False 

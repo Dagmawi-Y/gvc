@@ -47,9 +47,9 @@ async def get_badge(
     animation: str = "none"
 ):
     repository = f"{username}/{repo}"
+    referrer = request.headers.get("referer", "")
     
-    # Check if we can increment the view count
-    if await db.can_increment_view(request.client.host, username, RATE_LIMIT_MINUTES):
+    if await db.can_increment_view(username, referrer, RATE_LIMIT_MINUTES):
         count = await db.increment_views(repository)
     else:
         count = await db.get_views(repository)

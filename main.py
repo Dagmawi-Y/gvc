@@ -14,20 +14,7 @@ app.add_middleware(
 )
 
 db = AppwriteDB()
-
-def is_valid_github_referrer(request: Request, username: str) -> bool:
-    referrer = request.headers.get("referer", "")
-    if not referrer:
-        return True
-    
-    parsed = urlparse(referrer)
-    path_parts = parsed.path.strip('/').split('/')
-    
-    return (parsed.netloc == "github.com" and 
-            len(path_parts) == 1 and
-            path_parts[0].lower() == username.lower() and
-            not parsed.query and
-            not parsed.fragment)
+RATE_LIMIT_MINUTES = 60
 
 @app.get("/")
 async def root():
@@ -61,7 +48,8 @@ async def get_badge(
 ):
     repository = f"{username}/{repo}"
     
-    if is_valid_github_referrer(request, username):
+    # Check if we can increment the view count
+    if await db.can_increment_view(request.client.host, username, RATE_LIMIT_MINUTES):
         count = await db.increment_views(repository)
     else:
         count = await db.get_views(repository)

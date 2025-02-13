@@ -25,7 +25,9 @@ def is_valid_github_referrer(request: Request, username: str) -> bool:
     
     return (parsed.netloc == "github.com" and 
             len(path_parts) == 1 and
-            path_parts[0].lower() == username.lower())
+            path_parts[0].lower() == username.lower() and
+            not parsed.query and
+            not parsed.fragment)
 
 @app.get("/")
 async def root():

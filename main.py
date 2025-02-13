@@ -2,6 +2,7 @@ from fastapi import FastAPI, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from database import AppwriteDB
 from badge import generate_badge, THEMES, FONTS
+from urllib.parse import urlparse
 
 app = FastAPI(title="GitHub View Counter")
 
@@ -13,6 +14,16 @@ app.add_middleware(
 )
 
 db = AppwriteDB()
+
+def is_valid_github_referrer(request: Request) -> bool:
+    referrer = request.headers.get("referer", "")
+    if not referrer:
+        return True
+    
+    parsed = urlparse(referrer)
+    return (parsed.netloc == "github.com" and 
+            len(parsed.path.split('/')) >= 3 and
+            not any(x in parsed.path for x in ['/pulls', '/issues', '/commit', '/releases', '/actions']))
 
 @app.get("/")
 async def root():
@@ -46,7 +57,11 @@ async def get_badge(
 ):
     repository = f"{username}/{repo}"
     
-    count = await db.increment_views(repository)
+    # Only increment count if it's a valid GitHub referrer
+    if is_valid_github_referrer(request):
+        count = await db.increment_views(repository)
+    else:
+        count = await db.get_views(repository)
     
     svg = generate_badge(
         count=count,

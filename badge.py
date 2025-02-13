@@ -8,7 +8,11 @@ def format_number(count: int) -> str:
     else:
         return f"{count/1000000000:.1f}B".rstrip('0').rstrip('.')
 
-# Predefined color themes
+def truncate_text(text: str, max_length: int = 15) -> str:
+    if len(text) <= max_length:
+        return text
+    return text[:max_length-1] + "…"
+
 THEMES = {
     "default": {"bg": "#555", "count": "#4c1", "text": "#fff"},
     "dark": {"bg": "#222", "count": "#6f42c1", "text": "#fff"},
@@ -21,7 +25,6 @@ THEMES = {
     "neon": {"bg": "#000", "count": "#0ff", "text": "#fff"},
 }
 
-# Available fonts
 FONTS = {
     "default": "Segoe UI,Helvetica,Arial,sans-serif",
     "mono": "SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace",
@@ -42,29 +45,30 @@ def generate_badge(
 ) -> str:
     count_str = format_number(count)
     
-    # Get theme colors and font
     colors = THEMES.get(theme, THEMES["default"])
     font_family = FONTS.get(font, FONTS["default"])
     
-    # Adjust sizes based on size parameter
     if size == "small":
         height = 16
         font_size = 9
         label_width = 55
+        max_label_length = 10
     elif size == "large":
         height = 24
         font_size = 13
         label_width = 85
+        max_label_length = 20
     else:  # normal
         height = 20
         font_size = 11
         label_width = 70
+        max_label_length = 15
 
-    # Calculate widths
+    label = truncate_text(label, max_label_length)
+
     count_width = len(count_str) * (font_size - 3) + 15
     total_width = label_width + count_width
 
-    # Base SVG with gradients
     base_gradients = f'''
         <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -86,7 +90,6 @@ def generate_badge(
         </defs>
     '''
 
-    # Animation definitions
     animation_style = ""
     if animation == "pulse":
         animation_style = '''

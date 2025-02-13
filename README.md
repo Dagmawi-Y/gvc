@@ -8,16 +8,15 @@ A beautiful, customizable view counter for your GitHub repositories. Built with 
 - 🎯 Different styles (flat, flat-square, plastic)
 - 📏 Adjustable sizes (small, normal, large)
 - 🏷️ Custom labels
-- 📊 Smart number formatting (1k, 1M, 1B)
 - ✨ Animations (pulse, bounce, glow)
 - 🔤 Custom fonts
-- ⚡ Fast and reliable
+- ⚡ Fast
 - 🔒 Secure and non-tamperable with Appwrite backend
 
 ## Quick Start
 
 ```markdown
-![Views](https://your-domain/badge/username/repo)
+![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo})
 ```
 
 ## Customization
@@ -25,7 +24,7 @@ A beautiful, customizable view counter for your GitHub repositories. Built with 
 Customize your badge using URL parameters:
 
 ```markdown
-![Views](https://your-domain/badge/username/repo?theme=gradient-purple&style=flat&label=Views&size=large&font=fira&animation=pulse)
+![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=gradient-purple&style=flat&label=Views&size=large&font=fira&animation=pulse)
 ```
 
 ### Available Options
@@ -57,17 +56,17 @@ Customize your badge using URL parameters:
 
 Default with animation:
 ```markdown
-![Views](https://your-domain/badge/username/repo?animation=pulse)
+![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?animation=pulse)
 ```
 
 Gradient theme with custom font:
 ```markdown
-![Views](https://your-domain/badge/username/repo?theme=gradient-purple&font=fira)
+![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=gradient-purple&font=fira)
 ```
 
 Neon theme with glow:
 ```markdown
-![Views](https://your-domain/badge/username/repo?theme=neon&animation=glow)
+![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=neon&animation=glow)
 ```
 
 ## What Makes This Counter Special?

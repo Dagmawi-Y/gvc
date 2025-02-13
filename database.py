@@ -33,11 +33,10 @@ class AppwriteDB:
         parsed = urlparse(referrer)
         path_parts = parsed.path.strip('/').split('/')
         
-        return (parsed.netloc == "github.com" and 
-                len(path_parts) == 1 and
-                path_parts[0].lower() == username.lower() and
-                not parsed.query and
-                not parsed.fragment)
+        return (parsed.netloc == "github.com" and
+                len(path_parts) >= 1 and
+                path_parts[-1].lower() == username.lower() and
+                not parsed.query)
 
     def _is_bot(self, user_agent: str) -> bool:
         """Check if request is from a bot"""

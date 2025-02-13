@@ -16,6 +16,19 @@ THEMES = {
     "blue": {"bg": "#007acc", "count": "#2ea44f", "text": "#fff"},
     "purple": {"bg": "#6f42c1", "count": "#2ea44f", "text": "#fff"},
     "github": {"bg": "#24292e", "count": "#2ea44f", "text": "#fff"},
+    "gradient-blue": {"bg": "url(#grad1)", "count": "url(#grad2)", "text": "#fff"},
+    "gradient-purple": {"bg": "url(#grad3)", "count": "url(#grad4)", "text": "#fff"},
+    "neon": {"bg": "#000", "count": "#0ff", "text": "#fff"},
+}
+
+# Available fonts
+FONTS = {
+    "default": "Segoe UI,Helvetica,Arial,sans-serif",
+    "mono": "SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace",
+    "serif": "Times New Roman,serif",
+    "comic": "Comic Sans MS,cursive",
+    "fira": "Fira Code,monospace",
+    "roboto": "Roboto,sans-serif"
 }
 
 def generate_badge(
@@ -23,12 +36,15 @@ def generate_badge(
     style: str = "flat",
     theme: str = "default",
     label: str = "Views",
-    size: str = "normal"
+    size: str = "normal",
+    font: str = "default",
+    animation: str = "none"
 ) -> str:
     count_str = format_number(count)
     
-    # Get theme colors
+    # Get theme colors and font
     colors = THEMES.get(theme, THEMES["default"])
+    font_family = FONTS.get(font, FONTS["default"])
     
     # Adjust sizes based on size parameter
     if size == "small":
@@ -48,9 +64,63 @@ def generate_badge(
     count_width = len(count_str) * (font_size - 3) + 15
     total_width = label_width + count_width
 
+    # Base SVG with gradients
+    base_gradients = f'''
+        <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#00356B;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#1E90FF;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#2ea44f;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#32CD32;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#6f42c1;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#DA70D6;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#FF69B4;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#FF1493;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    '''
+
+    # Animation definitions
+    animation_style = ""
+    if animation == "pulse":
+        animation_style = '''
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.7; }
+                100% { opacity: 1; }
+            }
+        '''
+    elif animation == "bounce":
+        animation_style = '''
+            @keyframes bounce {
+                0% { transform: translateY(0); }
+                50% { transform: translateY(-2px); }
+                100% { transform: translateY(0); }
+            }
+        '''
+    elif animation == "glow":
+        animation_style = '''
+            @keyframes glow {
+                0% { filter: brightness(1); }
+                50% { filter: brightness(1.2); }
+                100% { filter: brightness(1); }
+            }
+        '''
+
     if style == "flat":
         svg = f'''
         <svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="{height}">
+            <style>
+                {animation_style}
+                .animated {{ animation: {animation} 2s infinite; }}
+            </style>
+            {base_gradients}
             <linearGradient id="b" x2="0" y2="100%">
                 <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
                 <stop offset="1" stop-opacity=".1"/>
@@ -58,12 +128,12 @@ def generate_badge(
             <mask id="a">
                 <rect width="{total_width}" height="{height}" rx="3" fill="#fff"/>
             </mask>
-            <g mask="url(#a)">
+            <g mask="url(#a)" class="{f'animated' if animation != 'none' else ''}">
                 <path fill="{colors['bg']}" d="M0 0h{label_width}v{height}H0z"/>
                 <path fill="{colors['count']}" d="M{label_width} 0h{count_width}v{height}H{label_width}z"/>
                 <path fill="url(#b)" d="M0 0h{total_width}v{height}H0z"/>
             </g>
-            <g fill="{colors['text']}" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji" font-size="{font_size}">
+            <g fill="{colors['text']}" text-anchor="middle" font-family="{font_family}" font-size="{font_size}">
                 <text x="{label_width/2}" y="{height*0.75}" fill-opacity=".3">{label}</text>
                 <text x="{label_width/2}" y="{height*0.7}">{label}</text>
                 <text x="{label_width + count_width/2}" y="{height*0.75}" fill-opacity=".3">{count_str}</text>
@@ -78,7 +148,7 @@ def generate_badge(
                 <rect fill="{colors['bg']}" width="{label_width}" height="{height}"/>
                 <rect fill="{colors['count']}" x="{label_width}" width="{count_width}" height="{height}"/>
             </g>
-            <g fill="{colors['text']}" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji" font-size="{font_size}">
+            <g fill="{colors['text']}" text-anchor="middle" font-family="{font_family}" font-size="{font_size}">
                 <text x="{label_width/2}" y="{height*0.7}">{label}</text>
                 <text x="{label_width + count_width/2}" y="{height*0.7}">{count_str}</text>
             </g>
@@ -101,13 +171,13 @@ def generate_badge(
                 <path fill="{colors['count']}" d="M{label_width} 0h{count_width}v{height}H{label_width}z"/>
                 <path fill="url(#b)" d="M0 0h{total_width}v{height}H0z"/>
             </g>
-            <g fill="{colors['text']}" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji" font-size="{font_size}">
+            <g fill="{colors['text']}" text-anchor="middle" font-family="{font_family}" font-size="{font_size}">
                 <text x="{label_width/2}" y="{height*0.7}">{label}</text>
                 <text x="{label_width + count_width/2}" y="{height*0.7}">{count_str}</text>
             </g>
         </svg>
         '''
     else:
-        svg = generate_badge(count, "flat", theme, label, size)
+        svg = generate_badge(count, "flat", theme, label, size, font, animation)
 
     return svg.strip() 

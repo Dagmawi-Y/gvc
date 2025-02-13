@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: gh-view-counter
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: APPWRITE_ENDPOINT
+        sync: false
+      - key: APPWRITE_PROJECT_ID
+        sync: false
+      - key: APPWRITE_API_KEY
+        sync: false
+      - key: DATABASE_ID
+        sync: false
+      - key: COLLECTION_ID
+        sync: false 

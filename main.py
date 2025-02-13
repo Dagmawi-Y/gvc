@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from database import AppwriteDB
-from badge import generate_badge, THEMES
+from badge import generate_badge, THEMES, FONTS
 
 app = FastAPI(title="GitHub View Counter")
 
@@ -20,11 +20,13 @@ async def root():
         "message": "GitHub View Counter API",
         "usage": {
             "basic": "![Views](https://your-domain/badge/username/repo)",
-            "with_options": "![Views](https://your-domain/badge/username/repo?theme=dark&style=flat-square&label=Visitors&size=large)",
+            "with_options": "![Views](https://your-domain/badge/username/repo?theme=gradient-purple&style=flat&label=Views&size=large&font=fira&animation=pulse)",
             "options": {
                 "theme": list(THEMES.keys()),
                 "style": ["flat", "flat-square", "plastic"],
                 "size": ["small", "normal", "large"],
+                "font": list(FONTS.keys()),
+                "animation": ["none", "pulse", "bounce", "glow"],
                 "label": "any text (default: Views)"
             }
         }
@@ -38,7 +40,9 @@ async def get_badge(
     style: str = "flat",
     theme: str = "default",
     label: str = "Views",
-    size: str = "normal"
+    size: str = "normal",
+    font: str = "default",
+    animation: str = "none"
 ):
     repository = f"{username}/{repo}"
     
@@ -49,7 +53,9 @@ async def get_badge(
         style=style,
         theme=theme,
         label=label,
-        size=size
+        size=size,
+        font=font,
+        animation=animation
     )
     
     return Response(

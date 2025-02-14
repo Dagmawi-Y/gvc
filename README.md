@@ -4,12 +4,13 @@ A beautiful, customizable view counter for your GitHub repositories. Built with 
 
 ## Features
 
-- 🎨 Multiple themes (including gradient themes!)
+- 🎨 Multiple themes (including gradients and rainbow!)
 - 🎯 Different styles (flat, flat-square, plastic)
 - 📏 Adjustable sizes (small, normal, large)
 - 🏷️ Custom labels
 - ✨ Animations (pulse, bounce, glow)
 - 🔤 Custom fonts
+- 🔄 Reversible layout (number/label order)
 - ⚡ Fast
 - 🔒 Secure and non-tamperable with Appwrite backend
 
@@ -24,7 +25,7 @@ A beautiful, customizable view counter for your GitHub repositories. Built with 
 Customize your badge using URL parameters:
 
 ```markdown
-![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=gradient-purple&style=flat&label=Views&size=large&font=fira&animation=pulse)
+![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=rainbow&style=flat&label=Views&size=large&font=fira&animation=pulse&reverse=true)
 ```
 
 ### Available Options
@@ -32,10 +33,11 @@ Customize your badge using URL parameters:
 - **Themes**: 
   - Basic: `default`, `dark`, `light`, `blue`, `purple`, `github`
   - Gradient: `gradient-blue`, `gradient-purple`
-  - Special: `neon`
+  - Vibrant: `rainbow`, `sunset`, `candy`, `ocean`, `fire`, `cyberpunk`, `retro`, `neon-pink`, `cosmic`, `neon`
 
 - **Styles**: `flat`, `flat-square`, `plastic`
 - **Sizes**: `small`, `normal`, `large`
+- **Layout**: `reverse=true/false` (switches number/label order)
 - **Fonts**: 
   - `default` (Segoe UI)
   - `mono` (SFMono)
@@ -54,19 +56,19 @@ Customize your badge using URL parameters:
 
 ## Cool Examples
 
-Default with animation:
+Rainbow theme with reversed layout:
 ```markdown
-![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?animation=pulse)
+![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=rainbow&reverse=true)
 ```
 
-Gradient theme with custom font:
+Cyberpunk with glow:
 ```markdown
-![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=gradient-purple&font=fira)
+![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=cyberpunk&animation=glow)
 ```
 
-Neon theme with glow:
+Sunset theme with custom label:
 ```markdown
-![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=neon&animation=glow)
+![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=sunset&label=Total)
 ```
 
 ## License

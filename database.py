@@ -82,6 +82,7 @@ class AppwriteDB:
                     visitor_id = f"{username}_{visitor_id}"
             
             current_time = datetime.now(timezone.utc)
+            print(f"Debug - Current time (UTC): {current_time}")
             
             result = self.database.list_documents(
                 database_id=self.database_id,
@@ -90,6 +91,7 @@ class AppwriteDB:
             )
             
             if result['total'] == 0:
+                print(f"Debug - New visitor: {visitor_id}")
                 self.database.create_document(
                     database_id=self.database_id,
                     collection_id=os.getenv('IP_COLLECTION_ID'),
@@ -106,9 +108,17 @@ class AppwriteDB:
                 return True
             else:
                 last_visit = datetime.fromisoformat(result['documents'][0]['last_visit'])
-                time_diff = current_time - last_visit
+                if last_visit.tzinfo is None:
+                    last_visit = last_visit.replace(tzinfo=timezone.utc)
                 
-                if time_diff.total_seconds() >= (rate_limit_minutes * 60):
+                time_diff = current_time - last_visit
+                seconds_passed = time_diff.total_seconds()
+                print(f"Debug - Last visit: {last_visit}")
+                print(f"Debug - Time difference in seconds: {seconds_passed}")
+                print(f"Debug - Required seconds: {rate_limit_minutes * 60}")
+                
+                if seconds_passed >= (rate_limit_minutes * 60):
+                    print(f"Debug - Updating last visit for: {visitor_id}")
                     self.database.update_document(
                         database_id=self.database_id,
                         collection_id=os.getenv('IP_COLLECTION_ID'),
@@ -119,6 +129,7 @@ class AppwriteDB:
                         }
                     )
                     return True
+                print(f"Debug - Rate limited: {visitor_id}")
                 return False
                 
         except Exception as e:

@@ -31,7 +31,8 @@ async def get_badge(
     label: str = "Views",
     size: str = "normal",
     font: str = "default",
-    animation: str = "none"
+    animation: str = "none",
+    reverse: bool = False
 ):
     repository = f"{username}/{repo}"
     
@@ -60,7 +61,8 @@ async def get_badge(
         label=label,
         size=size,
         font=font,
-        animation=animation
+        animation=animation,
+        reverse=reverse
     )
     
     return Response(

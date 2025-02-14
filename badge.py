@@ -23,6 +23,15 @@ THEMES = {
     "gradient-blue": {"bg": "url(#grad1)", "count": "url(#grad2)", "text": "#fff"},
     "gradient-purple": {"bg": "url(#grad3)", "count": "url(#grad4)", "text": "#fff"},
     "neon": {"bg": "#000", "count": "#0ff", "text": "#fff"},
+    "sunset": {"bg": "#FF6B6B", "count": "#4ECDC4", "text": "#fff"},
+    "candy": {"bg": "#FF69B4", "count": "#7B68EE", "text": "#fff"},
+    "ocean": {"bg": "#1E90FF", "count": "#00FF7F", "text": "#fff"},
+    "fire": {"bg": "#FF4500", "count": "#FFD700", "text": "#fff"},
+    "rainbow": {"bg": "url(#rainbow1)", "count": "url(#rainbow2)", "text": "#fff"},
+    "cyberpunk": {"bg": "#FF00FF", "count": "#00FFFF", "text": "#000"},
+    "retro": {"bg": "#FF6B6B", "count": "#FFE66D", "text": "#2C2C2C"},
+    "neon-pink": {"bg": "#FF1493", "count": "#00FF00", "text": "#fff"},
+    "cosmic": {"bg": "#6A0DAD", "count": "#FF69B4", "text": "#fff"}
 }
 
 FONTS = {
@@ -41,7 +50,8 @@ def generate_badge(
     label: str = "Views",
     size: str = "normal",
     font: str = "default",
-    animation: str = "none"
+    animation: str = "none",
+    reverse: bool = False
 ) -> str:
     count_str = format_number(count)
     
@@ -51,23 +61,29 @@ def generate_badge(
     if size == "small":
         height = 16
         font_size = 9
-        label_width = 55
+        padding = 3
         max_label_length = 10
     elif size == "large":
         height = 24
         font_size = 13
-        label_width = 85
+        padding = 5
         max_label_length = 20
     else:  # normal
         height = 20
         font_size = 11
-        label_width = 70
+        padding = 4
         max_label_length = 15
 
     label = truncate_text(label, max_label_length)
-
-    count_width = len(count_str) * (font_size - 3) + 15
+    
+    label_width = len(label) * (font_size - 3) + (padding * 2)
+    count_width = len(count_str) * (font_size - 3) + (padding * 2)
     total_width = label_width + count_width
+
+    first_width = count_width if reverse else label_width
+    second_width = label_width if reverse else count_width
+    first_text = count_str if reverse else label
+    second_text = label if reverse else count_str
 
     base_gradients = f'''
         <defs>
@@ -86,6 +102,17 @@ def generate_badge(
             <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" style="stop-color:#FF69B4;stop-opacity:1" />
                 <stop offset="100%" style="stop-color:#FF1493;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="rainbow1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#FF0000;stop-opacity:1" />
+                <stop offset="33%" style="stop-color:#FF00FF;stop-opacity:1" />
+                <stop offset="66%" style="stop-color:#0000FF;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#00FFFF;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="rainbow2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#00FF00;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#FFFF00;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
             </linearGradient>
         </defs>
     '''
@@ -132,15 +159,15 @@ def generate_badge(
                 <rect width="{total_width}" height="{height}" rx="3" fill="#fff"/>
             </mask>
             <g mask="url(#a)" class="{f'animated' if animation != 'none' else ''}">
-                <path fill="{colors['bg']}" d="M0 0h{label_width}v{height}H0z"/>
-                <path fill="{colors['count']}" d="M{label_width} 0h{count_width}v{height}H{label_width}z"/>
+                <path fill="{colors['count'] if reverse else colors['bg']}" d="M0 0h{first_width}v{height}H0z"/>
+                <path fill="{colors['bg'] if reverse else colors['count']}" d="M{first_width} 0h{second_width}v{height}H{first_width}z"/>
                 <path fill="url(#b)" d="M0 0h{total_width}v{height}H0z"/>
             </g>
             <g fill="{colors['text']}" text-anchor="middle" font-family="{font_family}" font-size="{font_size}">
-                <text x="{label_width/2}" y="{height*0.75}" fill-opacity=".3">{label}</text>
-                <text x="{label_width/2}" y="{height*0.7}">{label}</text>
-                <text x="{label_width + count_width/2}" y="{height*0.75}" fill-opacity=".3">{count_str}</text>
-                <text x="{label_width + count_width/2}" y="{height*0.7}">{count_str}</text>
+                <text x="{first_width/2}" y="{height*0.75}" fill-opacity=".3">{first_text}</text>
+                <text x="{first_width/2}" y="{height*0.7}">{first_text}</text>
+                <text x="{first_width + second_width/2}" y="{height*0.75}" fill-opacity=".3">{second_text}</text>
+                <text x="{first_width + second_width/2}" y="{height*0.7}">{second_text}</text>
             </g>
         </svg>
         '''
@@ -181,6 +208,6 @@ def generate_badge(
         </svg>
         '''
     else:
-        svg = generate_badge(count, "flat", theme, label, size, font, animation)
+        svg = generate_badge(count, "flat", theme, label, size, font, animation, reverse)
 
     return svg.strip() 

@@ -3,7 +3,7 @@ from appwrite.services.databases import Databases
 from appwrite.query import Query
 import os
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, timezone
 
 load_dotenv()
 
@@ -72,11 +72,16 @@ class AppwriteDB:
 
     async def can_increment_view(self, username: str, ip: str, referrer: str, user_agent: str, rate_limit_minutes: int = 60) -> bool:
         try:
-            visitor_id = f"{ip}_{user_agent}"
-            if username:
-                visitor_id = f"{username}_{visitor_id}"
+            # Special handling for GitHub camo
+            if "github-camo" in user_agent.lower():
+                visitor_id = f"{username}_github_camo" if username else "anonymous_github_camo"
+            else:
+                # Regular visitor identification
+                visitor_id = f"{ip}_{user_agent}"
+                if username:
+                    visitor_id = f"{username}_{visitor_id}"
             
-            current_time = datetime.now()
+            current_time = datetime.now(timezone.utc)
             
             result = self.database.list_documents(
                 database_id=self.database_id,

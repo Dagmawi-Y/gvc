@@ -12,7 +12,7 @@ A beautiful, customizable view counter for your GitHub repositories. Built with 
 - 🔤 Custom fonts
 - 🔄 Reversible layout (number/label order)
 - ⚡ Fast
-- 🔒 Secure and non-tamperable with Appwrite backend
+- 🔒 Secure and tamper-proof with a rate-limiting system
 
 ## Quick Start
 

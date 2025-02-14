@@ -46,7 +46,7 @@ async def get_badge(
         ip=client_ip,
         referrer=referrer,
         user_agent=user_agent,
-        rate_limit_minutes=1
+        rate_limit_minutes=5
     )
     
     if can_increment:

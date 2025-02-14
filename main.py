@@ -2,7 +2,6 @@ from fastapi import FastAPI, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from database import AppwriteDB
 from badge import generate_badge, THEMES, FONTS
-from urllib.parse import urlparse
 
 app = FastAPI(title="GitHub View Counter")
 
@@ -14,24 +13,12 @@ app.add_middleware(
 )
 
 db = AppwriteDB()
-RATE_LIMIT_MINUTES = 60
 
 @app.get("/")
 async def root():
     return {
         "message": "GitHub View Counter API",
-        "usage": {
-            "basic": "![Views](https://your-domain/badge/username/repo)",
-            "with_options": "![Views](https://your-domain/badge/username/repo?theme=gradient-purple&style=flat&label=Views&size=large&font=fira&animation=pulse)",
-            "options": {
-                "theme": list(THEMES.keys()),
-                "style": ["flat", "flat-square", "plastic"],
-                "size": ["small", "normal", "large"],
-                "font": list(FONTS.keys()),
-                "animation": ["none", "pulse", "bounce", "glow"],
-                "label": "any text (default: Views)"
-            }
-        }
+        "usage": "![Views](https://your-domain/badge/username/repo)"
     }
 
 @app.get("/badge/{username}/{repo}")
@@ -47,21 +34,7 @@ async def get_badge(
     animation: str = "none"
 ):
     repository = f"{username}/{repo}"
-    
-    referrer = request.headers.get("referer", "")
-    user_agent = request.headers.get("user-agent", "")
-    client_ip = request.client.host
-    
-    if await db.can_increment_view(
-        username=username,
-        ip=client_ip,
-        referrer=referrer,
-        user_agent=user_agent,
-        rate_limit_minutes=RATE_LIMIT_MINUTES
-    ):
-        count = await db.increment_views(repository)
-    else:
-        count = await db.get_views(repository)
+    count = await db.increment_views(repository)
     
     svg = generate_badge(
         count=count,

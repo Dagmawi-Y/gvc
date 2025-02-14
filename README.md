@@ -69,16 +69,6 @@ Neon theme with glow:
 ![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=neon&animation=glow)
 ```
 
-## What Makes This Counter Special?
-
-1. **Unique Gradient Themes**: Beautiful gradient color schemes
-2. **Animations**: Add life to your badges with subtle animations
-3. **Font Choices**: Match your repository's style
-4. **Neon Theme**: Stand out with a cyberpunk-style badge
-5. **Smart Number Formatting**: Clean display of large numbers
-6. **Real-time Updates**: Instant view counting
-7. **Non-tamperable**: Secure backend with Appwrite
-
 ## License
 
 MIT License

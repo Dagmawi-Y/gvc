@@ -71,4 +71,51 @@ class AppwriteDB:
             return 0
 
     async def can_increment_view(self, username: str, ip: str, referrer: str, user_agent: str, rate_limit_minutes: int = 60) -> bool:
-        return True
+        try:
+            visitor_id = f"{ip}_{user_agent}"
+            if username:
+                visitor_id = f"{username}_{visitor_id}"
+            
+            current_time = datetime.now()
+            
+            result = self.database.list_documents(
+                database_id=self.database_id,
+                collection_id=os.getenv('IP_COLLECTION_ID'),
+                queries=[Query.equal('visitor_id', visitor_id)]
+            )
+            
+            if result['total'] == 0:
+                self.database.create_document(
+                    database_id=self.database_id,
+                    collection_id=os.getenv('IP_COLLECTION_ID'),
+                    document_id='unique()',
+                    data={
+                        'visitor_id': visitor_id,
+                        'ip': ip,
+                        'username': username,
+                        'user_agent': user_agent,
+                        'referrer': referrer,
+                        'last_visit': current_time.isoformat()
+                    }
+                )
+                return True
+            else:
+                last_visit = datetime.fromisoformat(result['documents'][0]['last_visit'])
+                time_diff = current_time - last_visit
+                
+                if time_diff.total_seconds() >= (rate_limit_minutes * 60):
+                    self.database.update_document(
+                        database_id=self.database_id,
+                        collection_id=os.getenv('IP_COLLECTION_ID'),
+                        document_id=result['documents'][0]['$id'],
+                        data={
+                            'last_visit': current_time.isoformat(),
+                            'referrer': referrer
+                        }
+                    )
+                    return True
+                return False
+                
+        except Exception as e:
+            print(f"Error in can_increment_view: {e}")
+            return False

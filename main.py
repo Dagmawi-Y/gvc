@@ -34,7 +34,24 @@ async def get_badge(
     animation: str = "none"
 ):
     repository = f"{username}/{repo}"
-    count = await db.increment_views(repository)
+    
+    # Get visitor information
+    client_ip = request.client.host
+    user_agent = request.headers.get("user-agent", "")
+    referrer = request.headers.get("referer", "")
+    
+    can_increment = await db.can_increment_view(
+        username=username,
+        ip=client_ip,
+        referrer=referrer,
+        user_agent=user_agent,
+        rate_limit_minutes=1
+    )
+    
+    if can_increment:
+        count = await db.increment_views(repository)
+    else:
+        count = await db.get_views(repository)
     
     svg = generate_badge(
         count=count,

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
-from database import AppwriteDB
-from badge import generate_badge, THEMES, FONTS
+from .database import AppwriteDB
+from .badge import generate_badge, THEMES, FONTS
 
 app = FastAPI(title="GitHub View Counter")
 

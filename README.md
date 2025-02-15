@@ -17,7 +17,7 @@ A beautiful, customizable view counter for your GitHub repositories. Built with 
 ## Quick Start
 
 ```markdown
-![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo})
+![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo})
 ```
 
 ## Customization
@@ -25,7 +25,7 @@ A beautiful, customizable view counter for your GitHub repositories. Built with 
 Customize your badge using URL parameters:
 
 ```markdown
-![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=rainbow&style=flat&label=Views&size=large&font=fira&animation=pulse&reverse=true)
+![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=rainbow&style=flat&label=Views&size=large&font=fira&animation=pulse&reverse=true)
 ```
 
 ### Available Options
@@ -58,17 +58,17 @@ Customize your badge using URL parameters:
 
 Rainbow theme with reversed layout:
 ```markdown
-![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=rainbow&reverse=true)
+![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=rainbow&reverse=true)
 ```
 
 Cyberpunk with glow:
 ```markdown
-![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=cyberpunk&animation=glow)
+![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=cyberpunk&animation=glow)
 ```
 
 Sunset theme with custom label:
 ```markdown
-![Views](https://gh-views-counter.onrender.com/badge/{username}/{repo}?theme=sunset&label=Total)
+![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=sunset&label=Total)
 ```
 
 ## License

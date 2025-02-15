@@ -28,6 +28,8 @@ Customize your badge using URL parameters:
 ![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=rainbow&style=flat&label=Views&size=large&font=fira&animation=pulse&reverse=true)
 ```
 
+![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=rainbow&style=flat&label=Views&size=large&font=fira&animation=pulse&reverse=true)
+
 ### Available Options
 
 - **Themes**: 

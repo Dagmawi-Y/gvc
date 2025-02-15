@@ -68,7 +68,8 @@ async def handle_badge_request(username: str, repo: str, context):
     )
     
     return {
-        'body': svg,
+        'body': str(svg),
+        'statusCode': 200,
         'headers': {
             'Content-Type': 'image/svg+xml',
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -86,9 +87,13 @@ async def main(context):
     
     if not parts or parts[0] == '':
         return {
-            'body': {
+            'body': json.dumps({
                 'message': 'GitHub View Counter API',
                 'usage': '![Views](https://your-domain/badge/username/repo)'
+            }),
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json'
             }
         }
     
@@ -98,8 +103,12 @@ async def main(context):
         return await handle_badge_request(username, repo, context)
     
     return {
-        'body': {
+        'body': json.dumps({
             'error': 'Invalid path'
+        }),
+        'statusCode': 400,
+        'headers': {
+            'Content-Type': 'application/json'
         }
     }
 

@@ -2,6 +2,7 @@ import os
 import sys
 import asyncio
 import json
+import base64
 
 # Add the current directory to Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -67,13 +68,15 @@ async def handle_badge_request(username: str, repo: str, context):
         reverse=reverse
     )
     
-    svg_bytes = str(svg).encode('utf-8')
+    svg_bytes = svg.encode('utf-8')
+    svg_base64 = base64.b64encode(svg_bytes).decode('utf-8')
+    data_uri = f'data:image/svg+xml;base64,{svg_base64}'
     
     return {
-        'body': svg_bytes,
+        'body': data_uri,
         'statusCode': 200,
         'headers': {
-            'Content-Type': 'image/svg+xml; charset=utf-8',
+            'Content-Type': 'text/plain',
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache',
             'Expires': '0'

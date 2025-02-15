@@ -20,6 +20,8 @@ A beautiful, customizable view counter for your GitHub repositories. Built with 
 ![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo})
 ```
 
+![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo})
+
 ## Customization
 
 Customize your badge using URL parameters:
@@ -63,15 +65,21 @@ Rainbow theme with reversed layout:
 ![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=rainbow&reverse=true)
 ```
 
+![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=rainbow&reverse=true)
+
 Cyberpunk with glow:
 ```markdown
 ![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=cyberpunk&animation=glow)
 ```
 
+![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=cyberpunk&animation=glow)
+
 Sunset theme with custom label:
 ```markdown
 ![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=sunset&label=Total)
 ```
+
+![Views](https://gh-counter.dagmawi.tech/badge/{username}/{repo}?theme=sunset&label=Total)
 
 ## License
 

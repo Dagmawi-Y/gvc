@@ -14,22 +14,32 @@ app.add_middleware(
 
 db = AppwriteDB()
 
-async def handle_badge_request(username: str, repo: str, request_data: dict):
-    style = request_data.get('style', 'flat')
-    theme = request_data.get('theme', 'default')
-    label = request_data.get('label', 'Views')
-    size = request_data.get('size', 'normal')
-    font = request_data.get('font', 'default')
-    animation = request_data.get('animation', 'none')
-    reverse = request_data.get('reverse', False)
-    
+@app.get("/")
+async def root():
+    return {
+        "message": "GitHub View Counter API",
+        "usage": "![Views](https://your-domain/badge/username/repo)"
+    }
+
+@app.get("/badge/{username}/{repo}")
+async def get_badge(
+    username: str,
+    repo: str,
+    request: Request,
+    style: str = "flat",
+    theme: str = "default",
+    label: str = "Views",
+    size: str = "normal",
+    font: str = "default",
+    animation: str = "none",
+    reverse: bool = False
+):
     repository = f"{username}/{repo}"
     
-    # Get visitor information from headers
-    headers = request_data.get('headers', {})
-    client_ip = headers.get('x-forwarded-for', '')
-    user_agent = headers.get('user-agent', '')
-    referrer = headers.get('referer', '')
+    # Get visitor information
+    client_ip = request.client.host
+    user_agent = request.headers.get("user-agent", "")
+    referrer = request.headers.get("referer", "")
     
     can_increment = await db.can_increment_view(
         username=username,
@@ -55,37 +65,15 @@ async def handle_badge_request(username: str, repo: str, request_data: dict):
         reverse=reverse
     )
     
-    return {
-        'content': svg,
-        'headers': {
-            'Content-Type': 'image/svg+xml',
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
+    return Response(
+        content=svg,
+        media_type="image/svg+xml",
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
         }
-    }
-
-def main(context):
-    """
-    Appwrite function handler
-    """
-    request_data = context.req.body
-    
-    path = context.req.path or ''
-    parts = path.strip('/').split('/')
-    
-    if not parts or parts[0] == '':
-        return {
-            'message': 'GitHub View Counter API',
-            'usage': '![Views](https://your-domain/badge/username/repo)'
-        }
-    
-    if len(parts) >= 2:
-        username = parts[0]
-        repo = parts[1]
-        return handle_badge_request(username, repo, request_data)
-    
-    return {'error': 'Invalid path'}
+    )
 
 if __name__ == "__main__":
     import uvicorn

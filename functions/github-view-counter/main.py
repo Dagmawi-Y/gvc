@@ -91,8 +91,11 @@ async def main(context: Any) -> Any:
     path_parts = context.req.path.strip('/').split('/')
     if len(path_parts) < 2:
         return {
-            "message": "GitHub View Counter API",
-            "usage": "![Views](https://your-domain/badge/username/repo)"
+            "body": {
+                "message": "GitHub View Counter API",
+                "usage": "![Views](https://your-domain/badge/username/repo)"
+            },
+            "statusCode": 200
         }
     
     username, repo = path_parts[-2:]
@@ -119,7 +122,14 @@ async def main(context: Any) -> Any:
         reverse=reverse
     )
     
-    return response.body, response.media_type, dict(response.headers)
+    return {
+        "body": response.body,
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": response.media_type,
+            **response.headers
+        }
+    }
 
 if __name__ == "__main__":
     import uvicorn

@@ -67,11 +67,13 @@ async def handle_badge_request(username: str, repo: str, context):
         reverse=reverse
     )
     
+    svg_bytes = str(svg).encode('utf-8')
+    
     return {
-        'body': str(svg),
+        'body': svg_bytes,
         'statusCode': 200,
         'headers': {
-            'Content-Type': 'image/svg+xml',
+            'Content-Type': 'image/svg+xml; charset=utf-8',
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache',
             'Expires': '0'

@@ -1,7 +1,9 @@
 import os
 import sys
 import asyncio
+import json
 
+# Add the current directory to Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.append(current_dir)
@@ -22,19 +24,21 @@ app.add_middleware(
 
 db = AppwriteDB()
 
-async def handle_badge_request(username: str, repo: str, request_data: dict):
-    style = request_data.get('style', 'flat')
-    theme = request_data.get('theme', 'default')
-    label = request_data.get('label', 'Views')
-    size = request_data.get('size', 'normal')
-    font = request_data.get('font', 'default')
-    animation = request_data.get('animation', 'none')
-    reverse = request_data.get('reverse', False)
+async def handle_badge_request(username: str, repo: str, context):
+    # Get query parameters from context
+    query = context.req.query or {}
+    style = query.get('style', 'flat')
+    theme = query.get('theme', 'default')
+    label = query.get('label', 'Views')
+    size = query.get('size', 'normal')
+    font = query.get('font', 'default')
+    animation = query.get('animation', 'none')
+    reverse = query.get('reverse', 'false').lower() == 'true'
     
     repository = f"{username}/{repo}"
     
     # Get visitor information from headers
-    headers = request_data.get('headers', {})
+    headers = context.req.headers or {}
     client_ip = headers.get('x-forwarded-for', '')
     user_agent = headers.get('user-agent', '')
     referrer = headers.get('referer', '')
@@ -77,8 +81,6 @@ async def main(context):
     """
     Appwrite function handler
     """
-    request_data = context.req.body
-    
     path = context.req.path or ''
     parts = path.strip('/').split('/')
     
@@ -93,7 +95,7 @@ async def main(context):
     if len(parts) >= 2:
         username = parts[0]
         repo = parts[1]
-        return await handle_badge_request(username, repo, request_data)
+        return await handle_badge_request(username, repo, context)
     
     return {
         'body': {

@@ -1,5 +1,6 @@
 import os
 import sys
+import asyncio
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
@@ -63,7 +64,7 @@ async def handle_badge_request(username: str, repo: str, request_data: dict):
     )
     
     return {
-        'content': svg,
+        'body': svg,
         'headers': {
             'Content-Type': 'image/svg+xml',
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -72,7 +73,7 @@ async def handle_badge_request(username: str, repo: str, request_data: dict):
         }
     }
 
-def main(context):
+async def main(context):
     """
     Appwrite function handler
     """
@@ -83,17 +84,24 @@ def main(context):
     
     if not parts or parts[0] == '':
         return {
-            'message': 'GitHub View Counter API',
-            'usage': '![Views](https://your-domain/badge/username/repo)'
+            'body': {
+                'message': 'GitHub View Counter API',
+                'usage': '![Views](https://your-domain/badge/username/repo)'
+            }
         }
     
     if len(parts) >= 2:
         username = parts[0]
         repo = parts[1]
-        return handle_badge_request(username, repo, request_data)
+        return await handle_badge_request(username, repo, request_data)
     
-    return {'error': 'Invalid path'}
+    return {
+        'body': {
+            'error': 'Invalid path'
+        }
+    }
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True) 
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+ 

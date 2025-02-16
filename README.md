@@ -4,9 +4,9 @@ A beautiful, customizable view counter for your GitHub repositories. Built with 
 
 ## Features
 
-- 🎨 Multiple themes (including gradients and rainbow!)
-- 🎯 Different styles (flat, flat-square, plastic)
-- 📏 Adjustable sizes (small, normal, large)
+- 🎨 Multiple themes
+- 🎯 Different styles
+- 📏 Adjustable sizes
 - 🏷️ Custom labels
 - ✨ Animations (pulse, bounce, glow)
 - 🔤 Custom fonts
